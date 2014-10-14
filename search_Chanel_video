@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>test youtube</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <script>
+            googleApiClientReady = function () {
+                loadAPIClientInterfaces();
+            };
+            function loadAPIClientInterfaces() {
+                gapi.client.load('youtube', 'v3', function () {
+                    search();
+                });
+            }
+
+            function search() {
+                var request = gapi.client.youtube.search.list({
+                    key: 'INSERT_YOUR_API_KEY_HERE',
+                    part: 'id,snippet',
+                    channelId: 'UCfBRIj1Tq8k7-SD8PPVPJpQ',
+                    maxResults: 50,
+                    order: 'viewCount',
+                    publishedAfter: '2014-10-07T12:00:00.000Z'
+                });
+                //Canal del gobierno de la republica
+                //UCfBRIj1Tq8k7-SD8PPVPJpQ
+
+                request.execute(function (response) {
+                    var youtubeApi = response.result;
+                    var videoList = '';
+                    $.each(youtubeApi.items, function (index) {
+                        videoList = videoList + youtubeApi.items[index].id.videoId + ',';
+                    });
+                    console.log(youtubeApi.items);
+                    videoList = videoList.substring(0, videoList.length - 1);
+                    searchProperties(videoList);
+                });
+            }
+
+            function searchProperties(id) {
+                var request2 = gapi.client.youtube.videos.list({
+                    key: 'INSERT_YOUR_API_KEY_HERE',
+                    part: 'id, snippet, contentDetails, player,recordingDetails,statistics,status,topicDetails',
+                    id: id,
+                    maxResults: 50
+                });
+                request2.execute(function (response) {
+                    var videosProperties = response.result;
+                    console.log(videosProperties.items);
+
+                });
+            }
+        </script>
+        <!--Carga de la api de Google, la carga de la api es indispensable!!!-->
+        <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
+        <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+        <!--/Carga de la api de Google-->
+    </body>
+</html>
